@@ -1,0 +1,104 @@
+# ==========================================
+# PROJECT 6 — LANGGRAPH V6.1
+# ==========================================
+
+builder_v61 = StateGraph(SupportState)
+
+# ------------------------------------------
+# NODES
+# ------------------------------------------
+
+builder_v61.add_node(
+    "classification_agent",
+    classification_agent_v3
+)
+
+builder_v61.add_node(
+    "retrieval_agent",
+    retrieval_agent_v4
+)
+
+builder_v61.add_node(
+    "response_agent",
+    response_agent_v2
+)
+
+builder_v61.add_node(
+    "decision_agent",
+    decision_agent_v3
+)
+
+builder_v61.add_node(
+    "escalation_agent",
+    escalation_agent_v3
+)
+
+# ------------------------------------------
+# MAIN FLOW
+# ------------------------------------------
+
+builder_v61.add_edge(
+    START,
+    "classification_agent"
+)
+
+builder_v61.add_edge(
+    "classification_agent",
+    "retrieval_agent"
+)
+
+builder_v61.add_edge(
+    "retrieval_agent",
+    "response_agent"
+)
+
+builder_v61.add_edge(
+    "response_agent",
+    "decision_agent"
+)
+
+# ------------------------------------------
+# CONDITIONAL ROUTING
+# ------------------------------------------
+
+builder_v61.add_conditional_edges(
+    "decision_agent",
+    lambda state: (
+        "escalation_agent"
+        if state.get(
+            "escalation_required",
+            False
+        )
+        else "end"
+    ),
+    {
+        "escalation_agent": "escalation_agent",
+        "end": END
+    }
+)
+
+builder_v61.add_edge(
+    "escalation_agent",
+    END
+)
+
+# ------------------------------------------
+# COMPILE
+# ------------------------------------------
+
+support_graph_v61 = builder_v61.compile()
+
+print("==========================================")
+print("PROJECT 6 LANGGRAPH V6.1")
+print("==========================================")
+print(
+    "Classification V3 → Retrieval V4"
+)
+print(
+    "→ Response V2 → Decision V3"
+)
+print(
+    "→ Conditional Escalation → V3"
+)
+print("==========================================")
+print("LangGraph V6.1 compiled successfully")

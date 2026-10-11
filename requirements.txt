@@ -1,0 +1,8 @@
+streamlit
+pandas
+numpy
+scikit-learn
+joblib
+sentence-transformers
+faiss-cpu
+langgraph==0.2.76
